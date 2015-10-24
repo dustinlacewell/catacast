@@ -1,0 +1,11 @@
+#!/bin/bash
+
+IFS=' ' eval 'ARGS=($2)'
+COLS="${ARGS[0]:-80}"
+ROWS="${ARGS[1]:-24}"
+PORT="${ARGS[2]:-9000}"
+IMAGE="dlacewell/ttycast"
+
+docker run --rm \
+    -i --net=host -e PORT=$PORT \
+    dlacewell/ttycast ttycast -c $COLS -r $ROWS
