@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# validate at least two arguments are passed
+if [[ ( -z $1 ) ]]; then
+    echo "Usage: ./catacast /path/to/cataclysm"
+    exit
+fi
+
+# remote host
+HOST="${HOST:-104.130.74.12}"
+PORT="${PORT:-9000}"
+CONNECTION="cdda@$HOST"
+
+# local command
+COMMAND="${@:1}"
+PWD=$(dirname $1)
+
+# local terminal dimensions
+ROWS=$(stty size | cut -d ' ' -f 1)
+COLS=$(stty size | cut -d ' ' -f 2)
+echo "Term size: $COLS x $ROWS"
+
+# create local named-pipe
+PIPE="/tmp/ttycast"
+echo "Local pipe: $PIPE"
+rm -f $PIPE
+mkfifo $PIPE
+
+# execute dlacewell/ttycast container on host
+echo "Starting ttycast on $CONNECTION:$PORT"
+sleep 3 && \
+    ttyplay -n /tmp/ttycast | \
+        ssh $CONNECTION $COLS $ROWS $PORT > /dev/null &
+
+# execute local command
+cd $PWD
+ttyrec -e $COMMAND /tmp/ttycast
+
