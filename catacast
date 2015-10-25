@@ -8,12 +8,14 @@ fi
 
 # remote host
 HOST="${HOST:-104.130.74.12}"
-PORT="${PORT:-9000}"
+PORT="${PORT:-9001}"
 CONNECTION="cdda@$HOST"
 
 # local command
 COMMAND="${@:1}"
 PWD=$(dirname $1)
+
+ADVERT="${ADVERT:-$USER}"
 
 # local terminal dimensions
 ROWS=$(stty size | cut -d ' ' -f 1)
@@ -30,7 +32,7 @@ mkfifo $PIPE
 echo "Starting ttycast on $CONNECTION:$PORT"
 sleep 3 && \
     ttyplay -n /tmp/ttycast | \
-        ssh $CONNECTION $COLS $ROWS $PORT > /dev/null &
+        ssh $CONNECTION $COLS $ROWS $PORT "$ADVERT" > /dev/null &
 
 # execute local command
 cd $PWD

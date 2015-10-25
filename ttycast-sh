@@ -3,9 +3,12 @@
 IFS=' ' eval 'ARGS=($2)'
 COLS="${ARGS[0]:-80}"
 ROWS="${ARGS[1]:-24}"
-PORT="${ARGS[2]:-9000}"
+PORT="${ARGS[2]:-9001}"
+ADVERT="${ARGS[@]:3}"
 IMAGE="dlacewell/ttycast"
 
+
+
 docker run --rm \
-    -i --net=host -e PORT=$PORT \
+    -i -p $PORT -e PORT=$PORT -e ADVERT="$ADVERT" \
     dlacewell/ttycast ttycast -c $COLS -r $ROWS
